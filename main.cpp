@@ -8,7 +8,6 @@ using namespace std;
 using namespace my::json;
 
 int main(){
-
     ifstream fin("./main.json");
     char buffer[256];
     char *val = getcwd(buffer, sizeof(buffer));
@@ -26,16 +25,10 @@ int main(){
 
     json my_json;
     my_json.parse(data);
-
     std::cout << my_json.str() << std::endl;    
-    
-    const string & type = my_json["course"][0]["type"][0];
-    std::cout << type << std::endl;
 
     my_json.clear();
     fin.close();
     fin.clear();
-
-    system("pause");
     return 0;
 }
