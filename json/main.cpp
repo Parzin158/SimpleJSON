@@ -2,14 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
+#include <stdlib.h>
 using namespace std;
 
 #include "json.h"
 using namespace my::json;
 
 int main(){
-
-    ifstream fin("./main.json");
+    ifstream fin("./Sample.json");
     char buffer[256];
     char *val = getcwd(buffer, sizeof(buffer));
     if (val) {
@@ -29,13 +29,12 @@ int main(){
 
     std::cout << my_json.str() << std::endl;    
     
-    const string & type = my_json["course"][0]["type"][0];
-    std::cout << type << std::endl;
+    // const string & type = my_json["clients"][1];
+    // std::cout << type << std::endl;
 
     my_json.clear();
     fin.close();
     fin.clear();
 
-    system("pause");
     return 0;
 }
