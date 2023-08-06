@@ -5,7 +5,7 @@ SRCDIR = json
 INCDIR = json
 
 #获取源文件路径下的所有.cpp和.o文件名
-SOURCE = $(wildcard ./%(SRCDIR)/*.cpp)
+SOURCE = $(wildcard ./$(SRCDIR)/*.cpp)
 $(warning SOURCE is ${SOURCE})
 OBJECT = $(patsubst %.cpp,./$(OBJDIR)/%.o, $(notdir $(filter %.cpp, $(SOURCE))))
 $(warning OBJECT is ${OBJECT})
@@ -16,7 +16,7 @@ I_FLAGS := $(INCLUDE:%=-I% )
 $(warning I_FLAGS is ${I_FLAGS})
 
 #编译选项
-CFLAGS := -g -O3 -w -std=c++11
+CFLAGS := -g -O3 -w -std=gnu++11
 $(warning CFLAGS is ${CFLAGS})
 
 $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
