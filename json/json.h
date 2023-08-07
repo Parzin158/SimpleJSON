@@ -1,9 +1,7 @@
 #pragma once
-
-#include<string>
-#include<vector>
-#include<map>
-
+#include <string>
+#include <vector>
+#include <map>
 using namespace std;
 
 /* 通过命名空间与其他库进行隔离 */
@@ -12,7 +10,8 @@ namespace json{ //二级
 class json
 {
 public:
-    enum Type{  /* 枚举类型Type来包含json中的所有数据类型 */
+    /* 枚举类型Type来包含json中的所有数据类型 */
+    enum Type{  
         json_null = 0,
         json_bool,
         json_int,
@@ -38,17 +37,11 @@ public:
     operator double();
     operator string();
 
-    /* 重载”[]“运算符，使数组类型可通过不同索引值存放不同类型元素。
-    通过数组下标获取到josn值，将其动态地转换成想要的基本类型。*/
+    /* 重载[]运算符
+    若操作对象为数组，则使数组通过索引值存放不同类型元素，并通过数组下标获取到json值，动态转换其类型。
+    若操作对象为object，传入参数为C++字符串 
+    */
     json & operator [] (int index); //返回为引用类型
-
-    /* 通过append函数向数组末尾添加元素 */
-    void append(const json & other);
-
-    /* 以字符串形式输出json的内容 */
-    string str() const;
-
-    /* 重载"[]"运算符，操作对象为object，传入参数为C++字符串 */
     json & operator [] (const char * key);
     json & operator [] (const string & key);
 
@@ -56,6 +49,12 @@ public:
     void operator = (const json & other);
     bool operator == (const json & other);
     bool operator != (const json & other);
+
+    /* 通过append函数向数组末尾添加元素 */
+    void append(const json & other);
+
+    /* 以字符串形式输出json的内容 */
+    string str() const;
 
     /* 利用copy函数，拷贝重复代码 */
     void copy(const json & other);
@@ -81,7 +80,7 @@ public:
     bool isArray() const { return m_type == json_array; }
     bool isObject() const { return m_type == json_object; }
 
-    /* 显性类型转换函数，const使函数体内json对象无法被修改 */
+    /* 显性类型转换函数，const使函数体内json对象成员变量无法被修改 */
     bool asBool() const;
     int asInt() const;
     double asDouble() const;
@@ -101,7 +100,6 @@ public:
     void parse(const string & str);
 
 private:
-
     /* 通过占用内存较小的联合体来定义json的值 */
     union Value{  
         bool m_bool;
@@ -112,8 +110,8 @@ private:
         std::map<string, json> * m_object; //键值对来存储json对象，键为string，值为json
     };
 
-    Type m_type; 
-    Value m_value;
+    Type m_type; // 记录数据类型
+    Value m_value; // 记录数据值
 };
 }
 }
