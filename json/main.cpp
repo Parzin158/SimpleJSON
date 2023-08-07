@@ -15,7 +15,6 @@ int main(){
     if (val) {
         std::cout << buffer << std::endl;
     }
-
     if(!fin.is_open()){
         std::cout << "Open file failed" << std::endl;
         return 0;
@@ -29,12 +28,11 @@ int main(){
 
     std::cout << my_json.str() << std::endl;    
     
-    // const string & type = my_json["clients"][1];
-    // std::cout << type << std::endl;
+    const string & client = my_json["clients"].str();
+    std::cout << client << std::endl;
 
     my_json.clear();
     fin.close();
     fin.clear();
-
     return 0;
 }
