@@ -2,7 +2,6 @@
 #include "parser.h"
 #include <sstream>
 using namespace std;
-
 using namespace my::json;
 
 /* 根据json传入的参数value的类型，将value值赋给对应类型的m_value */
@@ -24,7 +23,6 @@ json::json(const char * value) : m_type(json_string){
 json::json(const string & value) : m_type(json_string){
     m_value.m_string = new string(value);
 }
-
 
 /* 通过值的不同类型来构造 */
 json::json(Type type) : m_type(type){ 
@@ -53,7 +51,6 @@ json::json(Type type) : m_type(type){
         break;
     }
 }
-
 /* 通过其他的json来构造 */
 json::json(const json & other){
     copy(other);//拷贝重复代码，将other值传入当前json对象中
@@ -89,77 +86,78 @@ void json::copy(const json & other){
 }
 /* 进行浅拷贝时，需要释放原来other中的动态分配的指针，否则会发生内存泄漏 */
 
-
 /* 基本类型的运算符重载的实现 */
 json::operator bool(){
-    if (m_type != json_bool){ //类型非bool则抛出异常
+    if (m_type != json_bool){ 
         throw new logic_error("Type error, not a bool value. ");
     }
     return m_value.m_bool;
 }
 json::operator int(){
-    if (m_type != json_int){ //类型非int则抛出异常
+    if (m_type != json_int){ 
         throw new logic_error("Type error, not a int value. ");
     }
     return m_value.m_int;
 }
 json::operator double(){
-    if (m_type != json_double){ //类型非double则抛出异常
+    if (m_type != json_double){ 
         throw new logic_error("Type error, not a double value. ");
     }
     return m_value.m_double;
 }
 json::operator string(){
-    if (m_type != json_string){ //类型非string则抛出异常
+    if (m_type != json_string){ 
         throw new logic_error("Type error, not a string value. ");
     }
     return *(m_value.m_string); //对指针解引用取其内容
 }
 
-
 /* 重载”[]“运算符的实现 */
 json & json::operator [] (int index){
+    // 非数组类型则转换成数组，并动态创建数组
     if (m_type != json_array){
-        m_type = json_array; //非数组转换成数组类型
-        m_value.m_array = new vector<json>(); //动态创建数组
+        m_type = json_array; 
+        m_value.m_array = new vector<json>(); 
     }
-    if (index < 0){ //index值错误，则抛出异常
+    // 若index值错误，则抛出异常
+    if (index < 0){ 
         throw new logic_error("array[] index < 0");
     }
-    int size = (m_value.m_array)->size(); //size函数获取vector数组大小
-    if (index >= size){ //对数组进行扩容
+    int size = (m_value.m_array)->size(); 
+    // 根据index值对数组进行扩容，对新元素添加空json进行扩容
+    if (index >= size){
         for (int i = size; i <= index; i++){
-            (m_value.m_array)->push_back(json()); //对数组添加空json进行扩容
+            (m_value.m_array)->push_back(json());
         }
     }
-    return (m_value.m_array)->at(index); //返回索引值处的数组元素
+    // 返回索引值处的数组元素
+    return (m_value.m_array)->at(index); 
 }
-    
 /* 重载"[]"运算符，操作对象为object，传入参数为C++字符串 */
 json & json::operator [] (const char * key){
-    string name(key); //实例化string类的对象name，传入key进行构造
-    return ((*this))[name];
+    string name(key); // char类型转换为string类，传入key进行拷贝构造
+    return ((*this))[name]; // 使用string类型的重载
 }
 json & json::operator [] (const string & key){
-    if (m_type != json_object){ //若传入类型非other，先清空再转成other
+    // 若传入非对象类型，先清空再转成object
+    if (m_type != json_object){
         clear();
-        m_type = json_object;
-        m_value.m_object = new std::map<string, json>(); //动态创建
+        m_type = json_object; 
+        m_value.m_object = new std::map<string, json>();
     }
     return (*(m_value.m_object))[key]; //返回map键值对中的key
 } 
 
-
 /* append函数向数组末尾添加元素 */
 void json::append(const json & other){
-    if (m_type != json_array){ //传入类型非数组，先清理再转成数组
+    // 传入非数组类型，先清理再转成数组
+    if (m_type != json_array){ 
         clear();
-        m_type = json_array; //转换成数组类型
-        m_value.m_array = new vector<json>(); //动态创建数组
+        m_type = json_array; // 转换成数组类型
+        m_value.m_array = new vector<json>();
     }
-    (m_value.m_array)->push_back(other); //调用stl模板库push_back函数添加元素
+    (m_value.m_array)->push_back(other);
 }
-
 
 /* 重载"=", "==", "!="运算符 */
 void json::operator = (const json & other){
@@ -169,7 +167,7 @@ void json::operator = (const json & other){
 bool json::operator == (const json & other){
     if(m_type != other.m_type){
         return false;
-    } //先判断类型是否相等
+    }
     switch (m_type){
     case json_null:
         return true;
@@ -195,8 +193,7 @@ bool json::operator != (const json & other){
     return !((*this) == other); // 利用重载==的结果取反
 }
 
-
-/* 利用clear函数，释放原来内存 */
+/* 利用clear函数，根据数据类型，释放原来内存 */
 void json::clear(){
     switch (m_type)
     {
@@ -235,10 +232,9 @@ void json::clear(){
     m_type = json_null; //设置为空类型
 }
 
-
-/* 输出数组类型json的内容 */
+/* json类调用str()输出json的内容 */
 string json::str() const{
-    stringstream ss; //使用stringstream类实现对多个字符串的拼接
+    stringstream ss; // 使用stringstream类实现对多个字符串的拼接
     switch (m_type)
     {
     case  json_null:
@@ -260,10 +256,10 @@ string json::str() const{
         ss << '\"' << *(m_value.m_string) << '\"' ;
         break;
     case json_array:{
-        ss << '['; //从头到尾拼接数组每个 元素
+        ss << '['; //从头到尾拼接数组每个元素
         for (auto it = (m_value.m_array)->begin(); it != (m_value.m_array)->end(); it++){
             if (it != (m_value.m_array)->begin()){
-                ss << ',' ; //对中间元素用逗号分隔
+                ss << ',' ; // 对中间元素用逗号分隔
             }
             ss << it->str(); //递归调用str()函数
         }
@@ -271,13 +267,13 @@ string json::str() const{
     }
         break;
     case json_object:{
-        ss << '{'; //从头到尾拼接对象
+        ss << '{'; // 从头到尾拼接对象
         for (auto it = (m_value.m_object)->begin(); it != (m_value.m_object)->end(); it++){
             if (it != (m_value.m_object)->begin()){
                 ss << ',' ; //对中间元素用逗号分隔
             }
             ss << '\"' << it->first << '\"' << ':' << it->second.str(); 
-            //输出对象的key和value，其中value为json
+            // 输出对象的key和value，其中value为json
         }
         ss << '}';
     }
@@ -285,11 +281,10 @@ string json::str() const{
     default:
         break;
     }
-    return ss.str();
+    return ss.str(); // 递归调用str()输出
 }
 
-
-/* 显性类型转换函数，const使函数体内json对象无法被修改 */
+/* 显性类型转换函数，const使函数体内json对象成员变量无法被修改 */
 bool json::asBool() const{
     if (m_type != json_bool){
         throw new std::logic_error("type error, not bool value");
@@ -315,7 +310,6 @@ string json::asString() const{
     return *(m_value.m_string);
 }
 
-
 /* 判断数组中是否有索引，对象中是否有key */
 bool json::has(int index){
     if(m_type != json_array){
@@ -334,7 +328,6 @@ bool json::has(const string & key){
     }
     return ((m_value.m_object)->find(key) != (m_value.m_object)->end()); //返回寻找key结果
 }
-
 
 /* 删除索引位置的数组元素，对象的某个key */
 void json::remove(int index){
@@ -361,10 +354,9 @@ void json::remove(const string & key){
     (m_value.m_object)->erase(key); //释放内存
 }
 
-
 /* 解析函数 */
 void json::parse(const string & str){
     parser p;
-    p.load(str); //使用parser类的load方法解析str
+    p.load(str); //使用parser类的load方法解析字符串
     *this = p.parse();
 }
