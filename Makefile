@@ -1,5 +1,5 @@
 CC = g++
-TARGET = json
+TARGET = main
 OBJDIR = obj
 SRCDIR = json
 INCDIR = json
