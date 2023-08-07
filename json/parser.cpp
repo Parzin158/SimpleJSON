@@ -1,19 +1,16 @@
 #include "parser.h"
 using namespace my::json;
 
-
 /* 默认构造函数，空值初始化 */
 parser::parser() : m_str(""), m_idx(0){ 
 
 }
-
 
 /* 加载解析的字符串 */
 void parser::load(const string & str){
     m_str = str;
     m_idx = 0;
 }
-
 
 /* 跳过空白字符 */
 void parser::skip_white_space(){
@@ -22,7 +19,6 @@ void parser::skip_white_space(){
     }
 }
 
-
 /* 获取下一个字符 */
 char parser::get_next_token(){
     skip_white_space();
@@ -30,7 +26,6 @@ char parser::get_next_token(){
         throw std::logic_error("unexpected end of input");
     return m_str[m_idx++]; //拷贝构造，获取下一个字符的索引
 }
-
 
 json parser::parse(){
     char ch = get_next_token();
@@ -68,7 +63,6 @@ json parser::parse(){
     throw std::logic_error("unexpacted char");
 }
 
-
 /* 解析空值 */
 json parser::parse_null(){
     if (0 == m_str.compare(m_idx, 4, "null")){
@@ -94,7 +88,6 @@ json parser::parse_bool(){
 /* 解析数字 */
 json parser::parse_number(){        
     int pos = m_idx; //记录原始位置
-
     if ('-' == m_str[m_idx]){
         m_idx++; //负号后移一位
     }
@@ -104,8 +97,7 @@ json parser::parse_number(){
     }
 
     while (1){
-        m_idx++; //属于数字则后移
-        
+        m_idx++; //属于数字则后移        
         //浮点数
         if ('.' == m_str[m_idx]){
             m_idx++;
@@ -119,7 +111,6 @@ json parser::parse_number(){
             }
             return (std::atof(m_str.c_str() + pos));
         }
-
         //整数
         if (m_str[m_idx] < '0' || m_str[m_idx] > '9'){
             return (std::atoi(m_str.c_str() + pos));
@@ -203,6 +194,7 @@ json parser::parse_array(){
     return arr;
 }
 
+/* 解析对象 */
 json parser::parse_object(){
     json obj(json::json_object); //声明一个对象类型
     char ch = get_next_token();
