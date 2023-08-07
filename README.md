@@ -239,3 +239,6 @@ json parser::parse(){
 3. 选择想要查看JSON的请求。一般来说，JSON请求通常是通过AJAX进行的。在Chrome开发者工具中，可选择“XHR”选项卡查看AJAX请求。在这个选项卡中，可查看所有AJAX请求。点击其中一个请求，既可在“Headers”选项卡中看到请求的详细信息及“Response”选项卡中看到响应的内容，包括JSON数据。
 4. 使用pre标签将响应中的JSON数据格式化输出。在Chrome开发者工具中，复制JSON响应，在控制台中粘贴，使用JSON.stringify()方法将其格式化成易于阅读的形式。
 
+## 使用方法
+
+使用make指令编译文件，在项目文件夹下运行main文件运行程序，解析Sample文件中的json数据。
